@@ -1,70 +1,33 @@
 class GameState extends AbstractState {
 
-<<<<<<< HEAD
-  boolean click_counter=false;
-  int cc=0;
-  
-  public void setup(PGraphics pg) { 
+    final int NUM_TASKS = 10;
 
-    gui.addButton("game button")
-      .setValue(10)
-      .setPosition(20, 20)
-      .setSize(200, 30)
-      .addListener(new ControlListener () {
-      public void controlEvent(ControlEvent event) {
-        click_counter= true;
-      }
-    }
-    );
-  }
-
-  public void handleInput() {
-  }
-
-  public void update(PApplet p) {
-    // println("game");
-    //if (millis() > 2000) StateManager.changeState(State.ResultState); //To mam samo zato da testiram result screen kot da je oddigrou
-    
-    if(click_counter)
-    {
-    println(cc);  
-    cc=cc+1;
-    click_counter = false;
-=======
     boolean click_counter=false;
-
     float[] axis = new float[4];
-
     int cc=0;
-
     int timer = 1000;
-
     final int HOLD_TIME_MS = 2000;
-
     int holdTimer = 0;
-
     int currentTask = 0;
-
-
     Side sideToComplete;
 
-
+ 
     public void nextTask() {
-        currentTask++;
+        if (currentTask++ >= NUM_TASKS) {
+
+            StateManager.changeState(State.ResultState);
+        }
 
         Side prevSide = sideToComplete;
 
         do {
-
             int randomSide = (int)random(6);
             sideToComplete = getSideByValue(randomSide);
         } while (sideToComplete == prevSide);
-        
     }
 
 
     public void setup(PGraphics pg) { 
-
 
         gui.addButton("game button")
             .setValue(10)
@@ -82,10 +45,7 @@ class GameState extends AbstractState {
     }
 
 
-
     public void update(PApplet p) {
-        // println("game");
-        //if (millis() > 2000) StateManager.changeState(State.ResultState); //To mam samo zato da testiram result screen kot da je oddigrou
 
         //COMMAND SENDING ------------------------------------------------------
         if (millis() >= timer + 50) {
@@ -102,7 +62,7 @@ class GameState extends AbstractState {
                 if (millis() >= timer + HOLD_TIME_MS) {
                     //task done
                     timer = millis();
-                    currentTask++;
+                    nextTask();
                 }
             } else {
                 timer = millis();
@@ -137,19 +97,13 @@ class GameState extends AbstractState {
         }
 
         if (cc>10)StateManager.changeState(State.ResultState);
-
-        cube.handleCommand(Command.HELLO);
->>>>>>> origin/master
     }
-    
-    if(cc>10)StateManager.changeState(State.ResultState);  }
 
-  public void draw(PGraphics p) {
 
-<<<<<<< HEAD
-    p.text("click counter: " + cc, 100, 200);
-  }
-=======
+    public void draw(PGraphics p) {
+
+        p.text("click counter: " + cc, 100, 200);
+
         p.pushMatrix();
         p.translate(screenSizeX / 2, screenSizeY / 2);
 
@@ -215,20 +169,16 @@ class GameState extends AbstractState {
 
         p.popMatrix();
 
-        p.text("click counter: " + cc, 100, 200);
+        p.fill(255, 0, 0);
+        
+        int rectLen = ((millis() - timer)/HOLD_TIME_MS) * screenSizeX / 4;
+        p.rect(screenSizeX/2 - rectLen, 500, rectLen, 50);
+        
+        
     }
 
     public void destroy() {
     }
->>>>>>> origin/master
 
-  public void destroy() {
-  }
-
-  public void controlEvent(ControlEvent theEvent) {
-    //Test controlEvent responding to events from ControlP5 on screen elements 
     
-
-    // println(theEvent.getController().getName());
-  }
 }
