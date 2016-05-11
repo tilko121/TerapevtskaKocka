@@ -33,6 +33,20 @@ public enum Command {
 public enum Side {
     UP, DOWN, LEFT, RIGHT, BACK, FRONT, UNDEFINED;
 }
+
+Side getSideByValue(int value){
+     switch(value){
+          case 0: return Side.UP;
+          case 1: return Side.DOWN;
+          case 2: return Side.LEFT;
+          case 3: return Side.RIGHT;
+          case 4: return Side.BACK;
+          case 5: return Side.FRONT;
+          case 6: return Side.UNDEFINED;
+     }
+     return Side.UNDEFINED;
+}
+
 /*
   CUBE SIDES
  */
@@ -50,10 +64,9 @@ class QiBT_aCube {
     float[] ypr = new float[3];
     float[] gravity = new float[3];
 
-    Side curSide = Side.UNDEFINED;
+    private Side curSide = Side.UNDEFINED;
 
     public QiBT_aCube() {
-        
     }
 
     void dmpGetQuaternion(byte[] packet) {
@@ -121,7 +134,15 @@ class QiBT_aCube {
         }
         return false;
     }
+    
+    Side getCurrentSide(){
+        return curSide;
+    }
 
+    boolean isMoving() {
+        if (abs(worldAccel.x) < 600 && abs(worldAccel.y) < 600 && abs(worldAccel.z) < 600) return false;
+        return true;
+    }
 
     public Quaternion mult (Quaternion a, Quaternion q) {
         float w = a.w*q.w - (a.x*q.x + a.y*q.y + a.z*q.z);
@@ -150,6 +171,8 @@ class QiBT_aCube {
 
     boolean handleCommand(Command command) {
 
+        try{
+            
         Command cmd;
 
         byte[] tmp = new byte[4];
@@ -159,7 +182,6 @@ class QiBT_aCube {
         int c = 0;
 
         try {
-
             c = serialBuffer.element();
         }
         catch(NoSuchElementException ex) {
@@ -363,6 +385,11 @@ class QiBT_aCube {
         default:
             break;
         } 
+        
+        }catch(Exception ex){
+            println("SKIPPING EXCEPTION, serialBuffer size = " + serialBuffer.size() + " clearing buffer now");
+            serialBuffer.clear();
+        }
 
         return true;
     }

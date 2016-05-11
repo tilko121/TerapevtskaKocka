@@ -25,14 +25,13 @@ public void serialEvent(Serial p) {
 
 void stop() {
     gui.dispose();
-    //gui.update();
     if(serialPort != null) serialPort.stop();
     System.exit(0);
 } 
 
 
 void setup() {
-    size(800, 600);
+    size(800, 600, P3D);
     noStroke();
     gui = new ControlP5(this);
     // lights();
@@ -40,35 +39,8 @@ void setup() {
     colorMode(RGB, 1);
 
     StateManager.pushState(State.MainMenu);
-
-
-    /*
-  // display serial port list for debugging/clarity
-     String portName = Serial.list()[0];
-     
-     
-     // open the serial port
-     Serial port = new Serial(this, portName, 38400);
-     port.buffer(1);
-     
-     cube = new QiBT_aCube(port);
-     
-     
-     cube.sendCommand(Command.HELLO, port);
-     while (!cube.handleCommand(Command.HELLO, port)) {
-     cube.sendCommand(Command.HELLO, port);
-     }
-     
-     stage=1;
-     screenSizeX=round(width);
-     screenSizeY=round(height);
-     startscreen=loadImage("neki.png");
-     image(startscreen, 0, 0, screenSizeX, screenSizeY);
-     title=createFont("font", 1000, true);
-     
-     */
+    
 }
-
 
 int counter = 0;
 boolean pickedUp = false;
@@ -81,7 +53,6 @@ float zPos = height / 2;
 
 float batVoltage = 0;
 
-float[] axis = new float[4];
 
 void draw() {
 
