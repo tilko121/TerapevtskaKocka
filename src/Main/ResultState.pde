@@ -1,12 +1,17 @@
 class ResultState extends AbstractState{
    
   //spremenljivke
+  
+  Textlabel title, timer, score; 
   boolean retry=false;
   boolean toStart=false;
   //
   
   public void setup(PGraphics p){
      println("constructed mainmenu"); 
+     
+     
+     
      gui.addButton("Retry")
      .setValue(10)
      .setPosition(screenSizeX / 2 - 100 ,screenSizeY / 2 - 30)
@@ -27,6 +32,24 @@ class ResultState extends AbstractState{
       }
      });
      
+   title = gui.addTextlabel("TitleLable")
+          .setPosition(screenSizeX / 2 - 26, screenSizeY / 2 - 200)
+          .setText("FINISHED")
+          ;
+      
+   timer = gui.addTextlabel("TimerLable")
+          .setPosition(screenSizeX / 2 - 100, screenSizeY / 2 - 150)
+          .setText("Your total time: " + random(30) + " seconds")
+          .setSize(50,30)
+          ;
+     
+   score = gui.addTextlabel("ScoreLable")
+          .setPosition(screenSizeX / 2 - 100, screenSizeY / 2 - 100)
+          .setText("You finished: " + (int)random(10) + " out of 10" )
+          .setSize(50,30)
+          ;
+     
+     
      
      
   }
@@ -35,6 +58,9 @@ class ResultState extends AbstractState{
    public void update(PApplet p){
      //update stuff with mouse control possibilities and everything
      //if(millis() > 2000) StateManager.changeState(State.GameState);
+      //title.setPosition(screenSizeX / 2 - ,screenSizeY / 2 - title.getSize());
+      
+      
       if (retry) {
       StateManager.changeState(State.GameState);
     }
@@ -50,8 +76,7 @@ class ResultState extends AbstractState{
    public void draw(PGraphics g){
      //rendering on display with draw support (use g prefix,  g.fill() etc, etc)
      
-     g.fill(1, 1, 1);
-     g.rect(30, 20, 55, 55);
+     
      
    }
    
