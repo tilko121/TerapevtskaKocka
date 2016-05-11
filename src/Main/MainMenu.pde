@@ -11,11 +11,11 @@ public class MainMenu extends AbstractState {
     boolean toConnect = false;
     boolean connecting = false;
     int select=-1;
-
-
+    
     //
 
     public void setup(PGraphics p) {
+        
         println("constructed mainmenu"); 
 
         connect = gui.addButton("Connect"); 

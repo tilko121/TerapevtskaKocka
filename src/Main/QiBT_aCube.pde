@@ -34,17 +34,84 @@ public enum Side {
     UP, DOWN, LEFT, RIGHT, BACK, FRONT, UNDEFINED;
 }
 
-Side getSideByValue(int value){
-     switch(value){
-          case 0: return Side.UP;
-          case 1: return Side.DOWN;
-          case 2: return Side.LEFT;
-          case 3: return Side.RIGHT;
-          case 4: return Side.BACK;
-          case 5: return Side.FRONT;
-          case 6: return Side.UNDEFINED;
-     }
-     return Side.UNDEFINED;
+Side getSideByValue(int value) {
+    switch(value) {
+    case 0: 
+        return Side.UP;
+    case 1: 
+        return Side.DOWN;
+    case 2: 
+        return Side.LEFT;
+    case 3: 
+        return Side.RIGHT;
+    case 4: 
+        return Side.BACK;
+    case 5: 
+        return Side.FRONT;
+    case 6: 
+        return Side.UNDEFINED;
+    }
+    return Side.UNDEFINED;
+}
+
+int getSideColor(Side s) {
+    switch(s) {
+    case UP: 
+        return color(255, 88, 0, 160);
+    case DOWN: 
+        return color(254, 212, 3, 160);
+    case LEFT: 
+        return color(0, 155, 72, 160);
+    case RIGHT: 
+        return color(255, 255, 255, 160);
+    case BACK: 
+        return color(1, 70, 173, 160);
+    case FRONT: 
+        return color(183, 18, 52, 160);
+    case UNDEFINED: 
+        return color(128, 128, 128, 255);
+    }  
+    return color(128, 128, 128, 255);
+}
+
+int getSideColorBright(Side s) {
+    switch(s) {
+    case UP: 
+        return color(255, 118, 0);
+    case DOWN: 
+        return color(255, 242, 33);
+    case LEFT: 
+        return color(30, 185, 102);
+    case RIGHT: 
+        return color(225, 225, 225);
+    case BACK: 
+        return color(31, 100, 203);
+    case FRONT: 
+        return color(213, 48, 82);
+    case UNDEFINED: 
+        return color(128, 128, 128);
+    }  
+    return color(128, 128, 128);
+}
+
+String getSideName(Side s) {
+    switch(s) {
+    case UP: 
+        return "UP";
+    case DOWN: 
+        return "DOWN";
+    case LEFT: 
+        return "LEFT";
+    case RIGHT: 
+        return "RIGHT";
+    case BACK: 
+        return "BACK";
+    case FRONT: 
+        return "FRONT";
+    case UNDEFINED: 
+        return "UNDEFINED";
+    }
+    return "UNDEFINED";
 }
 
 /*
@@ -134,13 +201,13 @@ class QiBT_aCube {
         }
         return false;
     }
-    
-    Side getCurrentSide(){
+
+    Side getCurrentSide() {
         return curSide;
     }
 
     boolean isMoving() {
-        if (abs(worldAccel.x) < 600 && abs(worldAccel.y) < 600 && abs(worldAccel.z) < 600) return false;
+        if (abs(worldAccel.x) < 150 && abs(worldAccel.y) < 150 && abs(worldAccel.z) < 500) return false;
         return true;
     }
 
@@ -171,222 +238,222 @@ class QiBT_aCube {
 
     boolean handleCommand(Command command) {
 
-        try{
-            
-        Command cmd;
-
-        byte[] tmp = new byte[4];
-
-        if (serialBuffer.size() <= 0) return false;
-
-        int c = 0;
-
         try {
-            c = serialBuffer.element();
-        }
-        catch(NoSuchElementException ex) {
-            return false;
-        }
+
+            Command cmd;
+
+            byte[] tmp = new byte[4];
+
+            if (serialBuffer.size() <= 0) return false;
+
+            int c = 0;
+
+            try {
+                c = serialBuffer.element();
+            }
+            catch(NoSuchElementException ex) {
+                return false;
+            }
 
 
-        int i = 0;
-        for (i = 0; i<Command.values().length; i++) {
-            if (c == Command.values()[i].value) {
+            int i = 0;
+            for (i = 0; i<Command.values().length; i++) {
+                if (c == Command.values()[i].value) {
+                    break;
+                }
+            }
+
+            try {
+                cmd = Command.values()[i];
+            }
+            catch(Exception ex) {
+                println("SKIPPING EXCEPTION, serialBuffer size = " + serialBuffer.size() + " clearing buffer now");
+                serialBuffer.clear();
+                return false;
+            }
+
+            if (cmd != command) return false;
+
+            boolean feedback = false;
+            switch(cmd) {
+            case NOP:
+                feedback = false;
+                break;
+
+            case HELLO:
+            case BATVOLTAGE:
+                if (serialBuffer.size() > 4) feedback = true;
+                break;
+
+            case EULER:
+            case YAWPITCHROLL:
+                if (serialBuffer.size() > 12) feedback = true;
+                break;
+
+            case REALACCEL:
+            case WORLDACCEL:
+                if (serialBuffer.size() > 6) feedback = true;
+                break;
+
+            case BATPERCENT:
+                if (serialBuffer.size() > 1) feedback = true;
+                break;
+
+            case QUATERNION:
+                if (serialBuffer.size() > 16) feedback = true;
+                break;
+
+            case TEAPOTPACKET:
+                if (serialBuffer.size() > 14) feedback = true;
+                break;
+
+            case DMPPACKET:
+                if (serialBuffer.size() > 20) feedback = true;
+                break;
+
+            case RAWACCEL:
+                if (serialBuffer.size() > 6) feedback = true;
+                break;
+
+            case TURNOFF:
+                break;
+            }
+
+            if (!feedback) return feedback;
+            if (cmd == command) serialBuffer.poll();
+
+            switch(cmd) {
+            case NOP:
+                break;
+            case HELLO:
+
+                while (serialBuffer.size() > 0) {
+                    byte ch = (byte)(serialBuffer.poll());
+                    print((char)ch); //naj bi na konzolo izpisalo Hi!
+                }
+                break;
+
+            case BATPERCENT:
+                int batteryPercent = serialBuffer.poll(); //saves the battery percentage into a variable
+                print("Battery percent = ");
+                println(batteryPercent);
+                break;
+
+            case BATVOLTAGE:
+                for (int ii = 0; ii<4; ii++) {
+                    tmp[ii] = (byte)((int) serialBuffer.poll());
+                }
+                float batteryVoltage = get4bytesFloat(tmp, 0); 
+                print("Battery voltage = ");
+                println(batteryVoltage);
+                break;
+
+            case QUATERNION:
+
+                for (int ii = 0; ii<4; ii++) {
+                    tmp[ii] = (byte)((int) serialBuffer.poll());
+                }
+                float w = get4bytesFloat(tmp, 0);
+
+                for (int ii = 0; ii<4; ii++) {
+                    tmp[ii] = (byte)((int) serialBuffer.poll());
+                }
+                float x = get4bytesFloat(tmp, 0);
+                for (int ii = 0; ii<4; ii++) {
+                    tmp[ii] = (byte)((int) serialBuffer.poll());
+                }
+                float y = get4bytesFloat(tmp, 0);
+                for (int ii = 0; ii<4; ii++) {
+                    tmp[ii] = (byte)((int) serialBuffer.poll());
+                }
+                float z = get4bytesFloat(tmp, 0);
+                quat.set(w, x, y, z);
+
+                break;
+
+
+                /*
+      case EULER:
+                 float e0 = bytesToFloat(Serial.read(), Serial.read(), Serial.read(), Serial.read());
+                 float e1 = bytesToFloat(Serial.read(), Serial.read(), Serial.read(), Serial.read());
+                 float e2 = bytesToFloat(Serial.read(), Serial.read(), Serial.read(), Serial.read());
+                 break;
+                 
+                 */
+
+            case YAWPITCHROLL:
+                for (int ii = 0; ii<4; ii++) {
+                    tmp[ii] = (byte)((int) serialBuffer.poll());
+                }
+                ypr[0] = get4bytesFloat(tmp, 0);
+                for (int ii = 0; ii<4; ii++) {
+                    tmp[ii] = (byte)((int) serialBuffer.poll());
+                }
+                ypr[1] = get4bytesFloat(tmp, 0);
+                for (int ii = 0; ii<4; ii++) {
+                    tmp[ii] = (byte)((int) serialBuffer.poll());
+                }
+                ypr[2] = get4bytesFloat(tmp, 0);
+                break;
+
+
+            case REALACCEL:
+                int raccel;
+                raccel = serialBuffer.poll() & 0xFF;
+                raccel |= ((int)serialBuffer.poll()) << 8;
+                realAccel.x = raccel;
+
+                raccel = serialBuffer.poll() & 0xFF;
+                raccel |= ((int)serialBuffer.poll()) << 8;
+                realAccel.y = raccel;
+
+                raccel = serialBuffer.poll() & 0xFF;
+                raccel |= ((int)serialBuffer.poll()) << 8;
+                realAccel.z = raccel;
+                break;
+
+
+            case WORLDACCEL:
+                int waccel;
+                waccel = serialBuffer.poll() & 0xFF;
+                waccel |= ((int)serialBuffer.poll()) << 8;
+                worldAccel.x = waccel;
+
+                waccel = serialBuffer.poll() & 0xFF;
+                waccel |= ((int)serialBuffer.poll()) << 8;
+                worldAccel.y = waccel;
+
+                waccel = serialBuffer.poll() & 0xFF;
+                waccel |= ((int)serialBuffer.poll()) << 8;
+                worldAccel.z = waccel;
+                break;
+
+            case DMPPACKET:
+                for (int ii = 0; ii<20; ii++) {
+                    DMPpacket[ii] = serialBuffer.poll();
+                }    
+                break;
+
+            case RAWACCEL:  
+                int rawaccel;
+                rawaccel = serialBuffer.poll() & 0xFF;
+                rawaccel |= ((int)serialBuffer.poll()) << 8;
+                accel.x = rawaccel;
+
+                rawaccel = serialBuffer.poll() & 0xFF;
+                rawaccel |= ((int)serialBuffer.poll()) << 8;
+                accel.y = rawaccel;
+
+                rawaccel = serialBuffer.poll() & 0xFF;
+                rawaccel |= ((int)serialBuffer.poll()) << 8;
+                accel.z = rawaccel;
+                break;
+
+            default:
                 break;
             }
         }
-
-        try {
-            cmd = Command.values()[i];
-        }
         catch(Exception ex) {
-            println("SKIPPING EXCEPTION, serialBuffer size = " + serialBuffer.size() + " clearing buffer now");
-            serialBuffer.clear();
-            return false;
-        }
-
-        if (cmd != command) return false;
-
-        boolean feedback = false;
-        switch(cmd) {
-        case NOP:
-            feedback = false;
-            break;
-
-        case HELLO:
-        case BATVOLTAGE:
-            if (serialBuffer.size() > 4) feedback = true;
-            break;
-
-        case EULER:
-        case YAWPITCHROLL:
-            if (serialBuffer.size() > 12) feedback = true;
-            break;
-
-        case REALACCEL:
-        case WORLDACCEL:
-            if (serialBuffer.size() > 6) feedback = true;
-            break;
-
-        case BATPERCENT:
-            if (serialBuffer.size() > 1) feedback = true;
-            break;
-
-        case QUATERNION:
-            if (serialBuffer.size() > 16) feedback = true;
-            break;
-
-        case TEAPOTPACKET:
-            if (serialBuffer.size() > 14) feedback = true;
-            break;
-
-        case DMPPACKET:
-            if (serialBuffer.size() > 20) feedback = true;
-            break;
-
-        case RAWACCEL:
-            if (serialBuffer.size() > 6) feedback = true;
-            break;
-
-        case TURNOFF:
-            break;
-        }
-
-        if (!feedback) return feedback;
-        if (cmd == command) serialBuffer.poll();
-
-        switch(cmd) {
-        case NOP:
-            break;
-        case HELLO:
-
-            while (serialBuffer.size() > 0) {
-                byte ch = (byte)(serialBuffer.poll());
-                print((char)ch); //naj bi na konzolo izpisalo Hi!
-            }
-            break;
-
-        case BATPERCENT:
-            int batteryPercent = serialBuffer.poll(); //saves the battery percentage into a variable
-            print("Battery percent = ");
-            println(batteryPercent);
-            break;
-
-        case BATVOLTAGE:
-            for (int ii = 0; ii<4; ii++) {
-                tmp[ii] = (byte)((int) serialBuffer.poll());
-            }
-            float batteryVoltage = get4bytesFloat(tmp, 0); 
-            print("Battery voltage = ");
-            println(batteryVoltage);
-            break;
-
-        case QUATERNION:
-
-            for (int ii = 0; ii<4; ii++) {
-                tmp[ii] = (byte)((int) serialBuffer.poll());
-            }
-            float w = get4bytesFloat(tmp, 0);
-
-            for (int ii = 0; ii<4; ii++) {
-                tmp[ii] = (byte)((int) serialBuffer.poll());
-            }
-            float x = get4bytesFloat(tmp, 0);
-            for (int ii = 0; ii<4; ii++) {
-                tmp[ii] = (byte)((int) serialBuffer.poll());
-            }
-            float y = get4bytesFloat(tmp, 0);
-            for (int ii = 0; ii<4; ii++) {
-                tmp[ii] = (byte)((int) serialBuffer.poll());
-            }
-            float z = get4bytesFloat(tmp, 0);
-            quat.set(w, x, y, z);
-
-            break;
-
-
-            /*
-      case EULER:
-             float e0 = bytesToFloat(Serial.read(), Serial.read(), Serial.read(), Serial.read());
-             float e1 = bytesToFloat(Serial.read(), Serial.read(), Serial.read(), Serial.read());
-             float e2 = bytesToFloat(Serial.read(), Serial.read(), Serial.read(), Serial.read());
-             break;
-             
-             */
-
-        case YAWPITCHROLL:
-            for (int ii = 0; ii<4; ii++) {
-                tmp[ii] = (byte)((int) serialBuffer.poll());
-            }
-            ypr[0] = get4bytesFloat(tmp, 0);
-            for (int ii = 0; ii<4; ii++) {
-                tmp[ii] = (byte)((int) serialBuffer.poll());
-            }
-            ypr[1] = get4bytesFloat(tmp, 0);
-            for (int ii = 0; ii<4; ii++) {
-                tmp[ii] = (byte)((int) serialBuffer.poll());
-            }
-            ypr[2] = get4bytesFloat(tmp, 0);
-            break;
-
-
-        case REALACCEL:
-            int raccel;
-            raccel = serialBuffer.poll() & 0xFF;
-            raccel |= ((int)serialBuffer.poll()) << 8;
-            realAccel.x = raccel;
-
-            raccel = serialBuffer.poll() & 0xFF;
-            raccel |= ((int)serialBuffer.poll()) << 8;
-            realAccel.y = raccel;
-
-            raccel = serialBuffer.poll() & 0xFF;
-            raccel |= ((int)serialBuffer.poll()) << 8;
-            realAccel.z = raccel;
-            break;
-
-
-        case WORLDACCEL:
-            int waccel;
-            waccel = serialBuffer.poll() & 0xFF;
-            waccel |= ((int)serialBuffer.poll()) << 8;
-            worldAccel.x = waccel;
-
-            waccel = serialBuffer.poll() & 0xFF;
-            waccel |= ((int)serialBuffer.poll()) << 8;
-            worldAccel.y = waccel;
-
-            waccel = serialBuffer.poll() & 0xFF;
-            waccel |= ((int)serialBuffer.poll()) << 8;
-            worldAccel.z = waccel;
-            break;
-
-        case DMPPACKET:
-            for (int ii = 0; ii<20; ii++) {
-                DMPpacket[ii] = serialBuffer.poll();
-            }    
-            break;
-
-        case RAWACCEL:  
-            int rawaccel;
-            rawaccel = serialBuffer.poll() & 0xFF;
-            rawaccel |= ((int)serialBuffer.poll()) << 8;
-            accel.x = rawaccel;
-
-            rawaccel = serialBuffer.poll() & 0xFF;
-            rawaccel |= ((int)serialBuffer.poll()) << 8;
-            accel.y = rawaccel;
-
-            rawaccel = serialBuffer.poll() & 0xFF;
-            rawaccel |= ((int)serialBuffer.poll()) << 8;
-            accel.z = rawaccel;
-            break;
-
-        default:
-            break;
-        } 
-        
-        }catch(Exception ex){
             println("SKIPPING EXCEPTION, serialBuffer size = " + serialBuffer.size() + " clearing buffer now");
             serialBuffer.clear();
         }

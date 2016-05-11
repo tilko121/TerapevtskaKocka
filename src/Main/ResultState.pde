@@ -10,8 +10,6 @@ class ResultState extends AbstractState{
   public void setup(PGraphics p){
      println("constructed mainmenu"); 
      
-     
-     
      gui.addButton("Retry")
      .setValue(10)
      .setPosition(screenSizeX / 2 - 100 ,screenSizeY / 2 - 30)

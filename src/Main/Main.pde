@@ -1,3 +1,8 @@
+import peasy.*;
+import peasy.org.apache.commons.math.*;
+import peasy.org.apache.commons.math.geometry.*;
+import peasy.test.*;
+
 import processing.serial.*;
 import processing.opengl.*;
 import toxi.geom.*;
@@ -15,6 +20,16 @@ static ControlP5 gui;
 Main main = this;
 final static int screenSizeX = 800, screenSizeY = 600;
 
+
+static PFont arielPFont;
+static PFont timesNewRomanPFont;
+static PFont calibriPFont;
+
+static int numSolvedTasks = 0;
+static int totalTime = 0;
+
+static float offsetYaw = 0.0;
+
 QiBT_aCube cube = new QiBT_aCube();
 
 static Serial serialPort;
@@ -23,23 +38,29 @@ public void serialEvent(Serial p) {
     while (p.available() > 0) serialBuffer.add((byte)p.readChar());
 }
 
+
 void stop() {
     gui.dispose();
-    if(serialPort != null) serialPort.stop();
+    if (serialPort != null) serialPort.stop();
     System.exit(0);
 } 
 
 
 void setup() {
+    arielPFont = createFont("Ariel", 14);
+    timesNewRomanPFont = createFont("Times New Roman", 14);
+    calibriPFont = createFont("Calibri", 14);
+    
     size(800, 600, P3D);
     noStroke();
     gui = new ControlP5(this);
+    
+    gui.setFont(new ControlFont(calibriPFont, 14));
     // lights();
     //smooth();
     colorMode(RGB, 1);
 
     StateManager.pushState(State.MainMenu);
-    
 }
 
 int counter = 0;
