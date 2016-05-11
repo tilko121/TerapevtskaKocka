@@ -31,8 +31,10 @@ class ResultState extends AbstractState{
      });
      
    title = gui.addTextlabel("TitleLable")
-          .setPosition(screenSizeX / 2 - 26, screenSizeY / 2 - 200)
+          .setPosition(screenSizeX / 2 - 100, screenSizeY / 2 - 200)
           .setText("FINISHED")
+          .setFont(new ControlFont(arielPFont, 40))
+          
           ;
       
    timer = gui.addTextlabel("TimerLable")
@@ -65,7 +67,7 @@ class ResultState extends AbstractState{
     
     if (toStart) {
       StateManager.changeState(State.MainMenu);
-      stop();
+      
     }
      
      

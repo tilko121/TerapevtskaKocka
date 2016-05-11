@@ -1,4 +1,3 @@
-
 public class MainMenu extends AbstractState {
 
     //spremenljivke
@@ -24,7 +23,7 @@ public class MainMenu extends AbstractState {
 
         connectionStatus = gui.addTextlabel("connectionStatus")
             .setText("Not connected")
-            .setPosition(screenSizeX / 2 - 140, screenSizeY / 2 - 45);
+            .setPosition(screenSizeX / 2 - 145, screenSizeY / 2 - 55);
 
         exit = gui.addButton("Exit")
             .setValue(10)
@@ -49,10 +48,10 @@ public class MainMenu extends AbstractState {
         );
 
         ddm = gui.addDropdownList("COM Port")
-            .setPosition(screenSizeX / 2 - 132, screenSizeY / 2 - 25)
-            .setSize(64, 100)
+            .setPosition(screenSizeX / 2 - 140, screenSizeY / 2 - 25)
+            .setSize(80, 100)
             .setItemHeight(20)
-            .setBarHeight(15)
+            .setBarHeight(20)
             .setOpen(false);
 
 

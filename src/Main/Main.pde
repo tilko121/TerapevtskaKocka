@@ -1,7 +1,3 @@
-import peasy.*;
-import peasy.org.apache.commons.math.*;
-import peasy.org.apache.commons.math.geometry.*;
-import peasy.test.*;
 
 import processing.serial.*;
 import processing.opengl.*;
@@ -47,9 +43,9 @@ void stop() {
 
 
 void setup() {
-    arielPFont = createFont("Ariel", 14);
+    arielPFont = createFont("Ariel", 64);
     timesNewRomanPFont = createFont("Times New Roman", 14);
-    calibriPFont = createFont("Calibri", 14);
+    calibriPFont = createFont("Calibri", 64);
     
     size(800, 600, P3D);
     noStroke();
@@ -60,7 +56,7 @@ void setup() {
     //smooth();
     colorMode(RGB, 1);
 
-    StateManager.pushState(State.MainMenu);
+    StateManager.pushState(State.ResultState);
 }
 
 int counter = 0;
