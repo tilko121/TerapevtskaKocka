@@ -17,14 +17,22 @@ final static int screenSizeX = 800, screenSizeY = 600;
 
 
 
+<<<<<<< HEAD
 QiBT_aCube cube = new QiBT_aCube();
 
 /*void stop() {
   cube.port.stop();
+=======
+void stop() {
+    gui.dispose();
+    if(serialPort != null) serialPort.stop();
+    System.exit(0);
+>>>>>>> origin/master
 } 
 */
 
 
+<<<<<<< HEAD
 
 
 void setup() {
@@ -63,8 +71,19 @@ void setup() {
   title=createFont("font", 1000, true);
   
   */
-}
+=======
+void setup() {
+    size(800, 600, P3D);
+    noStroke();
+    gui = new ControlP5(this);
+    // lights();
+    //smooth();
+    colorMode(RGB, 1);
 
+    StateManager.pushState(State.MainMenu);
+    
+>>>>>>> origin/master
+}
 
 int counter = 0;
 boolean pickedUp = false;
@@ -77,7 +96,6 @@ float zPos = height / 2;
 
 float batVoltage = 0;
 
-float[] axis = new float[4];
 
 void draw() {
   
