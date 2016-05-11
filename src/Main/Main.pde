@@ -24,7 +24,9 @@ void stop() {
 } 
 
 
-
+void testFunction(){
+   println("test function"); 
+}
 
 
 void setup() {
